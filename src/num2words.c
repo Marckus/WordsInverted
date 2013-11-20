@@ -1,4 +1,5 @@
 #include "num2words.h"
+	
 
 static const char* const ONES[] = {
   "",
@@ -81,7 +82,7 @@ static size_t append_string(char* buffer, const size_t length, const char* str) 
   return (length > written) ? written : length;
 }
 
-void fuzzy_minutes_to_words(PblTm *t, char* words) {
+void fuzzy_minutes_to_words(struct tm *t, char* words) {
   int fuzzy_hours = t->tm_hour;
   int fuzzy_minutes = t->tm_min;
 
@@ -104,7 +105,7 @@ void fuzzy_minutes_to_words(PblTm *t, char* words) {
   }
 }
 
-void fuzzy_sminutes_to_words(PblTm *t, char* words) {
+void fuzzy_sminutes_to_words(struct tm *t, char* words) {
   int fuzzy_hours = t->tm_hour;
   int fuzzy_minutes = t->tm_min;
 
@@ -120,7 +121,7 @@ void fuzzy_sminutes_to_words(PblTm *t, char* words) {
   }
 }
 
-void fuzzy_hours_to_words(PblTm *t, char* words) {
+void fuzzy_hours_to_words(struct tm *t, char* words) {
   int fuzzy_hours = t->tm_hour;
   int fuzzy_minutes = t->tm_min;
 
@@ -141,6 +142,6 @@ void fuzzy_hours_to_words(PblTm *t, char* words) {
   }
 }
 
-void fuzzy_dates_to_words(PblTm *t, char* words) {
-  string_format_time(words, 7, DATE_FORMAT, t);
+void fuzzy_dates_to_words(struct tm *t, char* words) {
+	strftime(words, BUFFER_SIZE, "%a %e", t);
 }

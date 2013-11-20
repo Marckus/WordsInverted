@@ -1,0 +1,29 @@
+{
+    "versionLabel": "2.0",
+    "uuid": "174bc0cf-e791-4d96-9e11-ef6acd1bc2ba",
+    "appKeys": {},
+    "longName": "Words Inverted",
+    "versionCode": 1,
+    "capabilities": [
+        ""
+    ],
+    "shortName": "Words Inverted",
+    "companyName": "mikebikemusic",
+    "watchapp": {
+        "watchface": true
+    },
+    "resources": {
+        "media": [
+            {
+                "type": "font",
+                "name": "FONT_GOTHAMXNARROW_BOLD_42",
+                "file": "fonts/GothamXNarrow-Bold.ttf"
+            },
+            {
+                "type": "png-trans",
+                "name": "MENU_ICON",
+                "file": "images/menu_icon_wordsi.png"
+            }
+        ]
+    }
+}
