@@ -13,13 +13,13 @@ enum layer_names {
 };
 
 
-			 #ifdef INVERTED
-			 #define BGCOLOR GColorWhite
-			 #define FGCOLOR GColorBlack
-			 #else
-			 #define BGCOLOR GColorBlack
-			 #define FGCOLOR GColorWhite
-			 #endif
+#ifdef INVERTED
+   #define BGCOLOR GColorWhite
+   #define FGCOLOR GColorBlack
+#else
+   #define BGCOLOR GColorBlack
+   #define FGCOLOR GColorWhite
+#endif
 
 Window *window;
 TextLayer *text_date_layer;
@@ -34,47 +34,15 @@ typedef struct CommonWordsData {
   GFont font;
 } CommonWordsData;
 
-static GFont font_nevis;
-static GFont font_gothic;
+static GFont font_gothic_bold;
+static GFont font_bitham_bold;
+static GFont font_bitham_light;
 
 static struct CommonWordsData layers[NUM_LAYERS] =
 {{ .update = &fuzzy_hours_to_words },
  { .update = &fuzzy_sminutes_to_words },
  { .update = &fuzzy_minutes_to_words },
  { .update = &fuzzy_dates_to_words },
-};
-
-static bool narrow_the_tens[60] = {
-	false, false, false, false, false, false, false, false, false, false, 
-	false, false, false, true, true, false, false, false, true, true, 
-	false, false, false, false, false, false, false, false, false, false, 
-	false, false, false, false, false, false, false, false, false, false, 
-	false, false, false, false, false, false, false, false, false, false, 
-	false, false, false, false, false, false, false, false, false, false, 
-};
-
-static bool narrow_the_day[7][31] = {
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, false,
-	 false, false, false, false, false, false, false, false, false, false, false},
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, true,
-	 false, false, false, true,  false, true,  false, false, true,  true, false}, 
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, false,
-	 false, false, false, false, false, false, false, false, false, false, false},
-	{true,  true,  true,  true,  true,  true,  true,  true,  true,  true, 
-	 true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  
-	 true,  true,  true,  true,  true,  true,  true,  true,  true,  true, true}, 
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, false,
-	 false, false, false, false, false, false, false, false, false, false, false},
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, false,
-	 false, false, false, false, false, false, false, false, false, false, false},
-	{false, false, false, false, false, false, false, false, false, false, 
-	 false, false, false, false, false, false, false, false, false, false,
-	 false, false, false, false, false, false, false, false, false, false, false}
 };
 
 static bool tens_update[60] = {
@@ -121,7 +89,7 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
       update_layer(&layers[MINUTES]);
     }
 	if (tens_update[t->tm_min]) {
-		layers[TENS].font = narrow_the_tens[t->tm_min] ? font_nevis : font_gothic;
+		layers[TENS].font = font_bitham_light;
 		update_layer(&layers[TENS]);
     }
   }
@@ -130,7 +98,7 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
     update_layer(&layers[HOURS]);
   }
   if ((units_changed & DAY_UNIT) == DAY_UNIT) {
-		layers[DATE].font = narrow_the_day[t->tm_wday][t->tm_mday - 1] ? font_nevis : font_gothic;
+		layers[DATE].font = font_gothic_bold;
 	  	update_layer(&layers[DATE]);
   }
 }
@@ -172,22 +140,17 @@ void handle_init() {
 	window_stack_push(window, animated);
 	window_set_background_color(window, BGCOLOR);
 
-	font_nevis = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_GOTHAMXNARROW_BOLD_42));
-	font_gothic = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
+	font_bitham_light = fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
+	font_bitham_bold = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
+	font_gothic_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
 
-  init_layer(&layers[MINUTES], 42*2-8, 42+8, font_gothic);
-  init_layer(&layers[TENS], 42-6, 42+8, font_gothic);
-  init_layer(&layers[HOURS], 0-8, 42+6, font_gothic);
-  init_layer(&layers[DATE], 42*3-2, 42+4, font_gothic);
+  init_layer(&layers[MINUTES], 42*2-8, 42+8, font_bitham_light);
+  init_layer(&layers[TENS], 42-6, 42+8, font_bitham_light);
+  init_layer(&layers[HOURS], 0-8, 42+6, font_bitham_bold);
+  init_layer(&layers[DATE], 42*3-2, 42+4, font_gothic_bold);
 
   	time_t now = time(NULL);
  	struct tm *t = localtime(&now);
-
-	if (narrow_the_tens[t->tm_min])
-		layers[TENS].font = font_nevis;
-
-	if (narrow_the_day[t->tm_wday][t->tm_mday - 1])
-		layers[DATE].font = font_nevis;
 
   for (int i = 0; i < NUM_LAYERS; ++i)
   {
@@ -211,8 +174,6 @@ static void handle_deinit()
 		text_layer_destroy(layers[i].textLayer);
 	}
 	window_destroy(window);
-	
-	fonts_unload_custom_font(font_nevis);
 }
 
 int main() {

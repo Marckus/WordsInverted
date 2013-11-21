@@ -19,12 +19,12 @@ static const char* const TEENS[] ={
   "eleven",
   "twelve",
   "thirteen",
-  "fourteen",
+  "four",
   "fifteen",
-  "sixteen",
+  "six",
   "seven",
-  "eighteen",
-  "nineteen"
+  "eight",
+  "nine"
 };
 
 static const char* const TENS[] = {
@@ -113,7 +113,8 @@ void fuzzy_sminutes_to_words(struct tm *t, char* words) {
   memset(words, 0, BUFFER_SIZE);
 
   if (10 < fuzzy_minutes && fuzzy_minutes < 20) {
-    if (fuzzy_minutes == 17) {
+//    if (fuzzy_minutes == 17) {
+    if (fuzzy_minutes > 13 && 15 != fuzzy_minutes) {
         strcat(words, STR_TEEN);
       }
   } else if (fuzzy_minutes != 0 || (fuzzy_hours != 12 && fuzzy_hours != 0)) {
@@ -143,5 +144,5 @@ void fuzzy_hours_to_words(struct tm *t, char* words) {
 }
 
 void fuzzy_dates_to_words(struct tm *t, char* words) {
-	strftime(words, BUFFER_SIZE, "%a %e", t);
+	strftime(words, BUFFER_SIZE, DATE_FORMAT, t);
 }
