@@ -1,6 +1,6 @@
 #include "num2words.h"
 
-#define NOINVERTED
+#define INVERTED
 
 #define TIME_SLOT_ANIMATION_DURATION 700
 #define NUM_LAYERS 4
