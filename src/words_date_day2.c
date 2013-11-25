@@ -1,6 +1,8 @@
 #include "num2words.h"
 
-#define INVERTED
+static GColor BGCOLOR=GColorBlack;
+static GColor FGCOLOR=GColorWhite;
+static const int INVERTED=1;
 
 #define TIME_SLOT_ANIMATION_DURATION 700
 #define NUM_LAYERS 4
@@ -11,15 +13,6 @@ enum layer_names {
 	TENS,
 	DATE,
 };
-
-
-#ifdef INVERTED
-   #define BGCOLOR GColorWhite
-   #define FGCOLOR GColorBlack
-#else
-   #define BGCOLOR GColorBlack
-   #define FGCOLOR GColorWhite
-#endif
 
 Window *window;
 TextLayer *text_date_layer;
@@ -56,8 +49,8 @@ static bool tens_update[60] = {
 
 static bool minutes_update[60] = {
 	true, true, true, true, true, true, true, true, true, true, 
-	true, false, false, false, false, false, false, true, true, false, 
-	false, true, true, true, true, true, true, true, true, true, 
+	true, false, false, false, true, true, true, true, true, true, 
+	true, true, true, true, true, true, true, true, true, true, 
 	true, true, true, true, true, true, true, true, true, true, 
 	true, true, true, true, true, true, true, true, true, true, 
 	true, true, true, true, true, true, true, true, true, true, 
@@ -138,6 +131,15 @@ void handle_init() {
  	const bool animated = true;
 	window = window_create();
 	window_stack_push(window, animated);
+//        persist_write_bool(INVERTED, false);
+//        if (persist_read_bool(INVERTED)){
+//           BGCOLOR=GColorWhite;
+//           FGCOLOR=GColorBlack;
+//        }
+//        else {
+//           FGCOLOR=GColorWhite;
+//           BGCOLOR=GColorBlack;
+//        }
 	window_set_background_color(window, BGCOLOR);
 
 	font_bitham_light = fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
